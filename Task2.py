@@ -2,7 +2,7 @@ from random import random
 import matplotlib.pyplot as plt
 
 print("""===========================================================================
-ЗАДАНИЕ 2 (Вариант 21)
+ЗАДАНИЕ 2 
 Вероятность изготовления годной детали из каждой отливки независимо
 от других равна p.
 Случайная величина eta — число использованных отливок для
@@ -28,7 +28,9 @@ while n <= 0:
 
 print(f"Заданное значение n: n = {n}\n")
 
-# --- Генерация выборки ---
+
+
+
 def interval(u, p):
     s = 0.0
     a = p
@@ -43,35 +45,38 @@ def interval(u, p):
 xs = [interval(random(), p) for _ in range(n)]
 xs_sorted = sorted(xs)
 
-# --- Расчет числовых характеристик (без библиотек) ---
+
+
+
 x_bar = sum(xs) / n
 
-S2 = sum((x - x_bar) ** 2 for x in xs) / n  # По методичке делитель n
+S2 = sum((x - x_bar) ** 2 for x in xs) / n 
+
 
 x_min = xs_sorted[0]
 x_max = xs_sorted[-1]
 R = x_max - x_min
+
 
 if n % 2 == 1:
     Me = float(xs_sorted[n // 2])
 else:
     Me = (xs_sorted[n // 2 - 1] + xs_sorted[n // 2]) / 2.0
 
-# Теоретические значения для геометрического распределения
+
 E_eta = 1.0 / p
 D_eta = (1.0 - p) / (p * p)
 
-# --- Таблица 1: Числовые характеристики ---
+
 print("=" * 85)
 print("ТАБЛИЦА ЧИСЛОВЫХ ХАРАКТЕРИСТИК")
 print("=" * 85)
-# Вывод в одну строку, как в образце методички, или блоком для читаемости
 print(f"{'E(eta)':<10} {'x_bar':<10} {'|E-x_bar|':<10} {'D(eta)':<10} {'S^2':<10} {'|D-S^2|':<10} {'Me':<10} {'R':<10}")
 print("-" * 85)
 print(f"{E_eta:<10.4f} {x_bar:<10.4f} {abs(E_eta - x_bar):<10.4f} {D_eta:<10.4f} {S2:<10.4f} {abs(D_eta - S2):<10.4f} {Me:<10.4f} {R:<10.4f}")
 print("=" * 85)
 
-# --- Таблица 2: Для дискретной с.в. (пункт А методички) ---
+
 freq = {}
 for x in xs:
     freq[x] = freq.get(x, 0) + 1
@@ -95,9 +100,9 @@ print("-" * 70)
 print(f"max_j |n_j/n - P(eta=y_j)| = {max_dev:.6f}")
 print("=" * 70)
 
-# --- Функции распределения ---
+
 def F_theory(x, p):
-    if x < 1:           # ИСПРАВЛЕНО: строгое неравенство
+    if x < 1:
         return 0.0
     
     k = int(x)
@@ -106,10 +111,12 @@ def F_theory(x, p):
     
     return 1.0 - (1.0 - p) ** (k - 1)
 
+
 def F_theory_right(x, p):
     if x < 1:
         return 0.0
     return 1.0 - (1.0 - p) ** int(x)
+
 
 def F_empirical(x, xs_sorted, n):
     cnt = 0
@@ -120,7 +127,7 @@ def F_empirical(x, xs_sorted, n):
             break
     return cnt / n
 
-# --- Построение графика ---
+
 x_plot = x_max + 2
 while F_theory(x_plot + 1, p) < 0.99 and x_plot < 100000:
     x_plot += 1
@@ -134,13 +141,14 @@ plt.step(x_grid, y_theory, where="post", linewidth=2, color="blue", label="Те�
 plt.step(x_grid, y_emp, where="post", linestyle="--", color="orange", label="Выборочная F^(x)")
 plt.xlabel("x")
 plt.ylabel("F(x)")
-plt.title("Теоретическая и выборочная функции распределения (Вариант 21)")
+plt.title("Теоретическая и выборочная функции распределения")
 plt.legend()
 plt.grid(True, alpha=0.3)
 plt.tight_layout()
 plt.show()
 
-# --- Расчет меры расхождения D (Колмогоров) ---
+
+
 D = 0.0
 for j in range(1, n + 1):
     xj = xs_sorted[j - 1]
